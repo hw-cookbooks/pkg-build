@@ -12,10 +12,13 @@ ruby_block 'Detect omnibus ruby' do
 end
 
 if(node[:pkg_build][:use_pkg_build_ruby])
-  node.set[:pkg_build][:passenger][:ruby_dependency] = [
-    node[:pkg_build][:pkg_prefix], 
-    "ruby#{node[:pkg_build][:ruby][:version]}"
-  ].compact.join('-')
+  ruby_name = [node[:pkg_build][:pkg_prefix]]
+  if(node[:pkg_build][:ruby][:suffix_version])
+      ruby_name << "ruby#{node[:pkg_build][:ruby][:version]}"
+  else
+      ruby_name << 'ruby'
+  end
+  ruby_name = ruby_name.compact.join('-')
 end
 
 %w(libcurl4-gnutls-dev apache2 apache2-prefork-dev).each do |dep_pkg|
@@ -48,7 +51,7 @@ fpm_tng_gemdeps 'passenger' do
   gem_package_name_prefix [node[:pkg_build][:pkg_prefix], 'rubygem'].compact.join('-')
   gem_gem node[:pkg_build][:gems][:exec]
   reprepro node[:pkg_build][:reprepro]
-  version '3.0.18'
+  version node[:pkg_build][:passenger][:version]
 end
 
 fpm_tng_package libpassenger_name do
