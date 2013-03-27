@@ -32,6 +32,7 @@ define :build_ruby, :version => nil, :patchlevel => nil, :repository => nil do
   template File.join(node[:builder][:build_dir], ruby_build, 'postinst') do
     source 'ruby-postinst.erb'
     mode 0755
+    variables ({ :ruby_ver => r_version })
   end
 
   fpm_tng_package ruby_build do
