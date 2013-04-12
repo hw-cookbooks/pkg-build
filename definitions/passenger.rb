@@ -1,6 +1,4 @@
-# TODO: Ruby versions (like 2.0 now that stable is here :/)
-#
-define :build_passenger, :version => nil, :ruby_version => '1.9.3', :repository => nil, :ruby_dependency => nil do
+define :build_passenger, :version => nil, :ruby_version => nil, :repository => nil, :ruby_dependency => nil do
 
   include_recipe 'pkg-build::deps'
 
@@ -25,8 +23,8 @@ define :build_passenger, :version => nil, :ruby_version => '1.9.3', :repository 
   end
 
   # define names and prefixes as required
-  libpassenger_name = [node[:pkg_build][:pkg_prefix], 'libapache2-mod-passenger'].compact.join('-')
-  passenger_gem_name = [node[:pkg_build][:pkg_prefix], 'rubygem-passenger'].compact.join('-')
+  libpassenger_name = PkgBuild::Ruby.gem_name(node, 'libapache2-mod-passenger', params[:ruby_version])
+  passenger_gem_name = PkgBuild::Ruby.gem_name(node, 'passenger', params[:ruby_version])
   gem_prefix = node[:pkg_build][:gems][:dir] || node[:languages][:ruby][:gems_dir]
   pass_prefix = "gems/passenger-#{params[:version]}"
 
@@ -49,8 +47,11 @@ define :build_passenger, :version => nil, :ruby_version => '1.9.3', :repository 
   end
 
   fpm_tng_gemdeps 'passenger' do
-    gem_package_name_prefix [node[:pkg_build][:pkg_prefix], 'rubygem'].compact.join('-')
+    gem_fix_name false
+    gem_package_name_prefix [node[:pkg_build][:pkg_prefix], 'rubygem', params[:ruby_version]].compact.join('-')
+#    package_name_suffix params[:ruby_version] if params[:ruby_version] Enable this when FPM release fixed version
     gem_gem node[:pkg_build][:gems][:exec]
+    auto_depends false
     reprepro node[:pkg_build][:reprepro]
     repository params[:repository] if params[:repository]
     version params[:version]
@@ -73,7 +74,7 @@ define :build_passenger, :version => nil, :ruby_version => '1.9.3', :repository 
     version params[:version]
     description 'Passenger apache module installation'
     chdir File.join(node[:builder][:packaging_dir], "passenger-#{params[:version]}", 'gem')
-    depends %w(fastthread daemon-controller rack).map{|x|[node[:pkg_build][:pkg_prefix], 'rubygem', x].compact.join('-') }
+    depends %w(fastthread daemon-controller rack).map{|x|[node[:pkg_build][:pkg_prefix], 'rubygem', params[:ruby_version], x].compact.join('-') }
     reprepro node[:pkg_build][:reprepro]
     repository params[:repository] if params[:repository]
   end
