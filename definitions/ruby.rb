@@ -47,6 +47,7 @@ define :build_ruby, :version => nil, :patchlevel => nil, :repository => nil do
       libtinfo5 libyaml-0-2 zlib1g
     )
     # provides - rake gem
+    conflicts [node[:pkg_build][:pkg_prefix], 'ruby'].compact.join('-') if node[:pkg_build][:replace_deprecated]
     reprepro node[:pkg_build][:reprepro]
     repository params[:repository] if params[:repository]
   end

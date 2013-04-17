@@ -13,3 +13,7 @@ default[:pkg_build][:isolate] = false
 default[:pkg_build][:isolated_containers][:ubuntu_1204][:template] = 'ubuntu'
 default[:pkg_build][:isolated_containers][:ubuntu_1204][:template_opts] = {'--release' => 'precise'}
 default[:pkg_build][:isolate_solo_dir] = '/tmp/pkg-build-solo'
+default[:pkg_build][:maintainer] = 'Heavy Water'
+default[:pkg_build][:vendor] = 'Heavy Water'
+default[:pkg_build][:homepage] = 'http://www.hw-ops.com'
+default[:pkg_build][:replace_deprecated] = false

@@ -3,6 +3,12 @@ include_recipe 'pkg-build::deps'
 if(node[:pkg_build][:isolate])
   include_recipe 'lxc'
   include_recipe 'apt::cacher-ng'
+
+  # Force an early restart since template update is delayed
+  service 'pkg-build-cacher' do
+    service_name 'apt-cacher-ng'
+    action :restart
+  end
   
   Chef::Log.info 'Building containers for isolated package construction'
   

@@ -8,7 +8,14 @@ action :build do
           :pkg_build => {
             :pkg_prefix => node[:pkg_build][:pkg_prefix],
             :reprepro => false,
-            :isolate => false
+            :isolate => false,
+            :replace_deprecated => node[:pkg_build][:replace_deprecated],
+            :vendor => node[:pkg_build][:vendor],
+            :maintainer => node[:pkg_build][:maintainer]
+          },
+          :fpm_tng => {
+            :vendor => node[:pkg_build][:vendor],
+            :maintainer => node[:pkg_build][:maintainer]
           },
           :run_list => new_resource.run_list
         }, new_resource.attributes
