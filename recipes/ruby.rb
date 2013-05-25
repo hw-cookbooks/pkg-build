@@ -20,7 +20,8 @@ versions.uniq.each do |r_ver|
             :version => version,
             :patchlevel => patchlevel,
             :suffix_version => node[:pkg_build][:ruby][:suffix_version],
-            :replace_deprecated => node[:pkg_build][:ruby][:replace_deprecated]
+            :replace_deprecated => node[:pkg_build][:ruby][:replace_deprecated],
+            :extra_configure_args => node[:pkg_build][:ruby][:extra_configure_args],
           }
         }
       )

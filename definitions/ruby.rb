@@ -3,6 +3,7 @@ define :build_ruby, :version => nil, :patchlevel => nil, :repository => nil do
   r_version = params[:version]
   r_patchlevel = params[:patchlevel]
   r_fullversion = [params[:version], params[:patchlevel]].join('-')
+  r_extra_configure_args = node[:pkg_build][:ruby][:extra_configure_args].join(" ")
 
   include_recipe 'pkg-build::deps'
 
@@ -18,7 +19,7 @@ define :build_ruby, :version => nil, :patchlevel => nil, :repository => nil do
     suffix_cwd "ruby-#{r_fullversion}"
     commands [
       'autoconf',
-      "./configure --prefix=#{File.join(node[:pkg_build][:ruby][:install_prefix], "ruby-#{params[:version]}")} --bindir=#{File.join(node[:pkg_build][:ruby][:install_prefix], 'bin')} --disable-install-doc --enable-shared --with-baseruby=#{RbConfig.ruby} --program-suffix=#{r_version}",
+      "./configure --prefix=#{File.join(node[:pkg_build][:ruby][:install_prefix], "ruby-#{params[:version]}")} --bindir=#{File.join(node[:pkg_build][:ruby][:install_prefix], 'bin')} --disable-install-doc --enable-shared --with-baseruby=#{RbConfig.ruby} --program-suffix=#{r_version} #{r_extra_configure_args}",
       "make",
       "make install DESTDIR=$PKG_DIR"
     ]
