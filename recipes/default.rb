@@ -9,9 +9,9 @@ if(node[:pkg_build][:isolate])
     service_name 'apt-cacher-ng'
     action :restart
   end
-  
+
   Chef::Log.info 'Building containers for isolated package construction'
-  
+
   directory node[:pkg_build][:isolate_solo_dir] do
     recursive true
   end
@@ -87,17 +87,19 @@ if(node[:pkg_build][:isolate])
       mode 0644
     end
   end
-  
-  # Force full cookbook downloads
-  CookbookSynchronizer.send(:remove_const, :EAGER_SEGMENTS)
-  CookbookSynchronizer.const_set(:EAGER_SEGMENTS, CookbookVersion::COOKBOOK_SEGMENTS)
-  Chef::Log.warn 'Performing full cookbook sync...'
-  rest = Chef::REST.new(Chef::Config[:chef_server_url], node.name, Chef::Config[:client_key])
-  run_list_expansion = node.run_list.expand(node.chef_environment)
-  cookbook_hash = rest.post_rest(
-    "environments/#{node.chef_environment}/cookbook_versions",
-    :run_list => run_list_expansion.recipes.with_version_constraints_strings
-  )
-  CookbookSynchronizer.new(cookbook_hash, EventDispatch::Dispatcher.new).sync_cookbooks
-  Chef::Log.warn 'Full cookbook sync has been completed!'
+
+  unless Chef::Config[:solo]
+    # Force full cookbook downloads
+    CookbookSynchronizer.send(:remove_const, :EAGER_SEGMENTS)
+    CookbookSynchronizer.const_set(:EAGER_SEGMENTS, CookbookVersion::COOKBOOK_SEGMENTS)
+    Chef::Log.warn 'Performing full cookbook sync...'
+    rest = Chef::REST.new(Chef::Config[:chef_server_url], node.name, Chef::Config[:client_key])
+    run_list_expansion = node.run_list.expand(node.chef_environment)
+    cookbook_hash = rest.post_rest(
+      "environments/#{node.chef_environment}/cookbook_versions",
+      :run_list => run_list_expansion.recipes.with_version_constraints_strings
+    )
+    CookbookSynchronizer.new(cookbook_hash, EventDispatch::Dispatcher.new).sync_cookbooks
+    Chef::Log.warn 'Full cookbook sync has been completed!'
+  end
 end
