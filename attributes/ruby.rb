@@ -9,3 +9,4 @@ default[:pkg_build][:ruby][:package_dependencies] = %w(
   libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt-dev 
   autoconf libc6-dev ncurses-dev automake libtool bison subversion pkg-config
 )
+default[:pkg_build][:ruby][:extra_configure_args] = []
