@@ -24,24 +24,39 @@ action :build do
   end
 
   gem_package 'bundler'
+
+  build_commands = [
+    {
+      :command => "bundle install --path ./vendor --quiet --without=#{bundle_without_groups} --binstubs",
+      :environment => {'LANG' => 'en_US.UTF-8', 'LC_ALL' => 'en_US.UTF-8'}
+    },
+    new_resource.pre_commands,
+    'cp config/application.rb config/.application.rb.bak',
+    "echo '' >> config/application.rb",
+    "echo 'Rails.application.class.configure{config.assets.initialize_on_precompile=false}' >> config/application.rb",
+    "./bin/rake assets:precompile RAILS_ENV=#{cache[:environment]} RAILS_GROUPS=assets",
+    'mv config/.application.rb.bak config/application.rb',
+    new_resource.post_commands,
+    # TODO: add revision file with git sha
+    "mkdir -p #{::File.join('$PKG_DIR', cache[:install_dir_prefix], cache[:name], cache[:version])}",
+    "rsync -a --exclude=.git --exclude=log ./ #{::File.join('$PKG_DIR', cache[:install_dir_prefix], cache[:name], 'releases', cache[:version])}"
+  ].flatten.compact
+
+  if(new_resource.source.start_with?('/') && ::File.directory?(new_source.source))
+    build_type = :builder_dir
+  else
+    build_type = :builder_git
+  end
   
   # Fetch and build
-  builder_git new_resource.package_name do
-    repository cache[:source]
-    reference cache[:ref]
-    commands [
-      {
-        :command => "bundle install --path ./vendor --quiet --without=#{bundle_without_groups} --binstubs",
-        :environment => {'LANG' => 'en_US.UTF-8', 'LC_ALL' => 'en_US.UTF-8'}
-      },
-      "echo '' >> config/application.rb",
-      "echo 'Rails.application.class.configure{config.assets.initialize_on_precompile=false}' >> config/application.rb",
-      "./bin/rake assets:precompile RAILS_ENV=#{cache[:environment]} RAILS_GROUPS=assets",
-      # TODO: custom commands
-      # TODO: add revision file with git sha
-      "mkdir -p #{::File.join('$PKG_DIR', cache[:install_dir_prefix], cache[:name], cache[:version])}",
-      "rsync -a --exclude=.git --exclude=log ./ #{::File.join('$PKG_DIR', cache[:install_dir_prefix], cache[:name], 'releases', cache[:version])}"
-    ]
+  send(build_type, new_resource.package_name) do
+    if(build_type == :builder_git)
+      repository cache[:source]
+      reference cache[:ref]
+    else
+      custom_cwd cache[:source]
+    end
+    commands build_commands
     creates ::File.join(node[:builder][:build_dir], cache[:name], cache[:ref], 'public/assets')
   end
 

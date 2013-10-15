@@ -11,4 +11,5 @@ attribute :version, :kind_of => String
 attribute :bundle_without_groups, :kind_of => Array, :default => []
 attribute :repository, :kind_of => String
 attribute :package_name, :kind_of => String
-# TODO: add array for extra commands to run
+attribute :pre_commands, :kind_of => Array, :default => []
+attribute :post_commands, :kind_of => Array, :default => []
