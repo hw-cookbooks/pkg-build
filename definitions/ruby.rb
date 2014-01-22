@@ -2,7 +2,7 @@ define :build_ruby, :version => nil, :patchlevel => nil, :repository => nil do
 
   r_version = params[:version]
   r_patchlevel = params[:patchlevel]
-  r_fullversion = [params[:version], params[:patchlevel]].join('-')
+  r_fullversion = r_patchlevel.nil? ? params[:version] : [params[:version], params[:patchlevel]].join('-')
 
   include_recipe 'pkg-build::deps'
 

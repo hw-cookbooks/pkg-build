@@ -20,7 +20,11 @@ module PkgBuild
       end
 
       def ruby_build(node, version, patchlevel)
-        patch = patchlevel.to_s.start_with?('p') ? patchlevel : "p#{patchlevel}"
+        if patchlevel.nil?
+          patch = ''
+        else
+          patch = patchlevel.to_s.start_with?('p') ? patchlevel : "p#{patchlevel}"
+        end
         "#{ruby_name(node, version)}-#{version}-#{patch}"
       end
     end
