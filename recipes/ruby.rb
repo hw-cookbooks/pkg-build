@@ -9,10 +9,10 @@ comparable_versions = []
 
 versions.uniq.each do |r_ver|
   version, patchlevel = r_ver.split('-')
-  comparable_versions << [Gem::Version.new(version), patchlevel.nil? ? nil : patchlevel[1,patchlevel.length].to_i]
+  comparable_versions << [Gem::Version.new(version), patchlevel.nil? ? nil : patchlevel.to_s[1,patchlevel.length].to_i]
 
   if(node[:pkg_build][:isolate])
-    pkg_build_isolate patchlevel.nil? ? "ruby-#{version}" : "ruby-#{version}-#{patchlevel}" do
+    pkg_build_isolate ['ruby', version, patchlevel].compact.join('-') do
       container 'ubuntu_1204'
       attributes(
         :pkg_build => {
