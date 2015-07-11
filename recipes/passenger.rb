@@ -13,6 +13,9 @@ if(node[:pkg_build][:isolate])
               :version => passenger_version,
               :ruby_version => r_ver,
               :ruby_dependency => PkgBuild::Ruby.ruby_name(node, r_ver)
+            },
+            :ruby => {
+              :suffix_version => node[:pkg_build][:ruby][:suffix_version]
             }
           },
           :builder => {

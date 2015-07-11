@@ -10,13 +10,15 @@ if(node[:pkg_build][:isolate])
     not_if do
       to_process = []
       node[:pkg_build][:meta_mappings].map do |meta_name, info|
-        info[:versions].each do |version|
-          to_process << Mash.new(
-            :version => version
-          )
-        end
-        to_process.map do |pkg_info|
-          File.exists?(File.join(node[:fpm_tng][:package_dir], "#{meta_name}-#{pkg_info[:version]}.deb")) ? nil : meta_name
+        if info[:versions]
+          info[:versions].each do |version|
+            to_process << Mash.new(
+              :version => version
+            )
+          end
+          to_process.map do |pkg_info|
+            File.exists?(File.join(node[:fpm_tng][:package_dir], "#{meta_name}-#{pkg_info[:version]}.deb")) ? nil : meta_name
+          end
         end
       end.flatten.compact.empty?
     end
