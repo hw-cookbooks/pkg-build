@@ -1,8 +1,7 @@
-define :build_sphinx, :version => nil, :repository => nil, :reprepro => nil do
-
+define :build_sphinx, version: nil, repository: nil, reprepro: nil do
   include_recipe 'pkg-build::deps'
 
-  node[:pkg_build][:sphinx][:build_dependencies].each do |d_pkg|
+  node['pkg_build']['sphinx']['build_dependencies'].each do |d_pkg|
     package d_pkg
   end
 
@@ -14,17 +13,17 @@ define :build_sphinx, :version => nil, :repository => nil, :reprepro => nil do
     commands [
       './configure --prefix=$PKG_DIR/usr/local',
       'make',
-      'make install'
+      'make install',
     ]
-    creates File.join(node[:builder][:packaging_dir], sphinx_name, 'usr/local/bin/searchd')
+    creates File.join(node['builder']['packaging_dir'], sphinx_name, 'usr/local/bin/searchd')
   end
 
-  fpm_tng_package [node[:pkg_build][:pkg_prefix], 'sphinxsearch'].compact.join('-') do
+  fpm_tng_package [node['pkg_build']['pkg_prefix'], 'sphinxsearch'].compact.join('-') do
     output_type 'deb'
     description 'Sphinx search'
     depends %w(libc6 libexpat1 libgcc1 libmysqlclient18 libpq5 libstdc++6 libstemmer0d zlib1g)
     version params[:version]
-    chdir File.join(node[:builder][:packaging_dir], sphinx_name)
+    chdir File.join(node['builder']['packaging_dir'], sphinx_name)
     reprepro params[:reprepro]
     repository params[:repository] if params[:repository]
   end
