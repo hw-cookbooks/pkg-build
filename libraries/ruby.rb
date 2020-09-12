@@ -4,13 +4,13 @@ module PkgBuild
       def ruby_name(node, version)
         name = [node[:pkg_build][:pkg_prefix]]
         name << 'ruby'
-        if(node[:pkg_build][:ruby][:suffix_version])
+        if node[:pkg_build][:ruby][:suffix_version]
           name << version
         end
         name.compact.join('-')
       end
 
-      def gem_name(node, name, ruby_version=nil)
+      def gem_name(node, name, ruby_version = nil)
         gname = []
         gname << node[:pkg_build][:pkg_prefix]
         gname << 'rubygem'

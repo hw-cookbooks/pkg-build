@@ -1,4 +1,4 @@
-default[:pkg_build][:passenger][:root] = File.dirname(node[:languages][:ruby][:bin_dir].to_s)
+default[:pkg_build][:passenger][:root] = File.dirname(node['languages']['ruby']['bin_dir'].to_s)
 default[:pkg_build][:passenger][:version] = ''
 default[:pkg_build][:passenger][:versions] = []
 default[:pkg_build][:passenger][:ruby_dependency] = nil
