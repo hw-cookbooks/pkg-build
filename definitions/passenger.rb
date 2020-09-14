@@ -100,7 +100,7 @@ define :build_passenger, version: nil, ruby_version: nil, repository: nil, ruby_
     description 'Passenger apache module installation'
     chdir File.join(node['builder']['packaging_dir'], "passenger-#{params[:version]}", 'gem')
     depends lazy { deps_resource.generated_dependencies }
-    conflicts gem_conflicts.map { |v| "#{v}-passenger"}
+    conflicts gem_conflicts.map { |v| "#{v}-passenger" }
     reprepro node['pkg_build']['reprepro']
     repository params[:repository] if params[:repository]
   end

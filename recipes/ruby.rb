@@ -44,7 +44,7 @@ end
 
 if node['pkg_build']['isolate']
   Chef::Log.info 'Building custom Ruby containers'
-  grouped_v = comparable_versions.group_by { |v| v.first}
+  grouped_v = comparable_versions.group_by { |v| v.first }
   grouped_v.each do |version, comps|
     install_version = comps.sort do |a, b|
       if a.first == b.first
