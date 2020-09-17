@@ -14,7 +14,7 @@ if node['pkg_build']['isolate']
                      elsif value.is_a?(Hash) || value.is_a?(Chef::Node::Attribute)
                        [value.to_hash]
                      else
-                       [{ version: '1.0.0', dependencies: value}]
+                       [{ version: '1.0.0', dependencies: value }]
                      end
         to_process.map do |pkg_info|
           File.exist?(File.join(node['fpm_tng']['package_dir'], "#{meta_name}-#{pkg_info[:version]}.deb")) ? nil : meta_name
