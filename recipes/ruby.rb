@@ -44,15 +44,15 @@ end
 
 if node['pkg_build']['isolate']
   Chef::Log.info 'Building custom Ruby containers'
-  grouped_v = comparable_versions.group_by { |v| v.first}
+  grouped_v = comparable_versions.group_by { |v| v.first }
   grouped_v.each do |version, comps|
-    install_version = comps.sort do |a, b|
+    install_version = comps.max do |a, b|
       if a.first == b.first
         a.last <=> b.last
       else
         a.first <=> b.first
       end
-    end.last
+    end
     ruby_build = PkgBuild::Ruby.ruby_build(node, install_version.first.version, install_version.last)
     ruby_dpkg = File.join(node['fpm_tng']['package_dir'], "#{ruby_build}.deb")
     node['pkg_build']['isolated_containers'].each do |name, _opts|
