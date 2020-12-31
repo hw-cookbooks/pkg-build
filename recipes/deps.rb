@@ -10,4 +10,3 @@ if node['pkg_build']['reprepro']
 end
 
 node.normal['pkg_build'][:builder] = true
-

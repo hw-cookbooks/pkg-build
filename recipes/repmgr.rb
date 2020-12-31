@@ -42,4 +42,3 @@ fpm_tng_package [node['pkg_build']['prefix'], 'repmgr'].compact.join('-') do
   depends %w(libpq-dev)
   reprepro node['pkg_build']['reprepro']
 end
-
